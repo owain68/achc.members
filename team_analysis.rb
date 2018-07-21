@@ -1,19 +1,14 @@
 require 'csv'
 require 'pp'
+require_relative 'year_group'
 
-def year_group_on (at, dob)
-  return 'no dob' unless dob
-  birthday = Date.parse(dob)
-  last_day_of_school_year = at > Date.new(at.year, 8, 31) ? Date.new(at.year + 1, 8, 31) : Date.new(at.year, 8, 31)
-  "Y#{last_day_of_school_year.year - birthday.year - 5}"
-end
 
 INPUT_CSV_FILE = ARGV[0]
+analysis_date = ARGV[1] ? Date.parse(ARGV[1]) : Date.today
 team_collection = {}
 record_count = 0;
 member_stats = 0;
 
-# PlayerID,FirstName,Surname,Login,homePhone,workPhone,admin,forumadmin,reporter,selector,sitedesign,pageeditor,memberadmin,teamadmin,mobile,email,Column1,nickname,address,crb,dateofbirth,teamdescription,playing,gender,Subs paid?,matches,registered,pastmember,Umpire,UmpiringQualification,CoachingQualification,Junior(not18on1stSept),Veterans,Vintage,PlayTwice,Restrictions,LifeMember,GXJunior,Subs,Playing roles
 CSV.foreach(INPUT_CSV_FILE, headers: true) do |row|
   record_count += 1
   next if row['pastmember'] == 'TRUE' # skip if no longer a member
@@ -31,7 +26,7 @@ CSV.foreach(INPUT_CSV_FILE, headers: true) do |row|
     else
       team_collection[team][row['gender']] = 1
     end
-    year_group = year_group_on Date.today, row['dateofbirth']
+    year_group = YearGroup.on Date.today, row['dateofbirth']
     if team_collection[team][year_group]
       team_collection[team][year_group] += 1
     else
@@ -46,4 +41,11 @@ puts "#{record_count - member_stats} members ignored"
 puts "#{team_collection.size} teams found"
 
 
-pp team_collection.sort.to_h
+team_collection.sort.to_h.each do |team, stats|
+  next unless team =~ /Junior|Academy|U\d/
+  print team
+  stats.each do |k, v|
+    print ", #{k}->#{v}"
+  end
+  print "\n"
+end
