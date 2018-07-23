@@ -56,11 +56,11 @@ team_collection.sort.to_h.each do |team, stats|
     print ", #{k}->#{v}"
   end
   next unless stats[:age_group]
-  print "\n"
-  puts "\n Investigate"
-  normal_ages = [stats[:age_group].to_i - 5, stats[:age_group].to_i - 6]
-  stats[:members].each do |m|
-    highlight = normal_ages.include?(m[:age]) ? '' : '<<<<<<<<'
-    printf("  %-40s %-12s  %-7s %-2s     %-10s\n", m[:firstname] + ' ' + m[:lastname], m[:dob], m[:year], m[:age], highlight)
-  end
+  # print "\n"
+  # puts "\n Investigate"
+  # normal_ages = [stats[:age_group].to_i - 5, stats[:age_group].to_i - 6]
+  # stats[:members].each do |m|
+  #   highlight = normal_ages.include?(m[:age]) ? '' : '<<<<<<<<'
+  #   printf("  %-40s %-12s  %-7s %-2s     %-10s\n", m[:firstname] + ' ' + m[:lastname], m[:dob], m[:year], m[:age], highlight)
+  # end
 end
